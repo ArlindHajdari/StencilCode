@@ -1,0 +1,2 @@
+# StencilCode
+OpenMP - Stencil code 
