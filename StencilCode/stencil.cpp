@@ -27,7 +27,7 @@ int** preprocess()
 	return A;
 }
 
-void array_tostring(int** a)
+void matrix_tostring(int** a)
 {
 	for (int i = 0; i < N; i++)
 	{
@@ -67,7 +67,7 @@ void print_specific_elements(int argc, char ** argv, int ** temp)
 			int secondIndex = atoi(argv[i + 1]);
 
 			if (firstIndex < N && secondIndex < N)
-				cout << "A[" << firstIndex << "][" << secondIndex << "]: " << temp[firstIndex][secondIndex] << "\n";
+				cout << "\nA[" << firstIndex << "][" << secondIndex << "]: " << temp[firstIndex][secondIndex];
 		}
 	}
 	else
