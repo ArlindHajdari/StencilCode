@@ -4,19 +4,27 @@
 
 using namespace std;
 
+//const int N = 8192;
+//const int N = 20000;
+const int N = 3001;
+//const int N = 10;
+
+const int number_of_threads = 8;
+
 int main(int argc /*Number of arguments*/, char** argv /*Arguments(first argument the current .cpp path)*/)
 {
-#pragma region [Asynchronous]
-	omp_set_num_threads(4);
-	double start_asynchronous = omp_get_wtime();
+	float** temp_asynchronous = preprocess(N);
+	float** temp_synchronous = new float* [N];
+	memcpy(temp_synchronous, temp_asynchronous, sizeof(int) * N);
 
-	int** temp_asynchronous = preprocess();
-	calculate_array(temp_asynchronous, true);
+#pragma region [Asynchronous]
+	double start_asynchronous = omp_get_wtime();
+	
+	calculate_array(temp_asynchronous, true, N, number_of_threads);
+	//matrix_tostring(temp_asynchronous, N);
 
 	double end_asynchronous = omp_get_wtime();
-
-	//matrix_tostring(temp);
-	print_specific_elements(argc, argv, temp_asynchronous);
+	print_specific_elements(argc, argv, temp_asynchronous, N);
 
 	cout << "\nTime elapsed asynchronous: " << end_asynchronous - start_asynchronous;
 
@@ -26,16 +34,17 @@ int main(int argc /*Number of arguments*/, char** argv /*Arguments(first argumen
 #pragma region [Synchronous]
 	double start_synchronous = omp_get_wtime();
 
-	int** temp_synchronous = preprocess();
-	calculate_array(temp_synchronous, false);
+	calculate_array(temp_synchronous, false, N);
+	//matrix_tostring(temp_synchronous,N);
 
 	double end_synchronous = omp_get_wtime();
 
-	print_specific_elements(argc, argv, temp_synchronous);
+	print_specific_elements(argc, argv, temp_synchronous, N);
 
 	cout << "\nTime elapsed synchronous: " << end_synchronous - start_synchronous;
 
 	delete[] temp_synchronous;
 #pragma endregion [Synchronous]
+
 	return 0;
 }

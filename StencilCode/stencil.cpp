@@ -4,61 +4,75 @@
 
 using namespace std;
 
-const int N = 3000;
-
-int** preprocess()
+float** preprocess(int matrix_size)
 {
-	int** A = new int* [N];
+	float** A = new float* [matrix_size];
 	int i;
-	#pragma omp parallel private(i) shared (A)
+	#pragma omp parallel private(i)
 	{
 		#pragma omp for
-		for (i = 0; i < N; ++i)
-			A[i] = new int[N] {};
-
-		#pragma omp for
-		for (i = 1; i < N; i++)
+		for (i = 0; i < matrix_size; ++i)
 		{
+			A[i] = new float[matrix_size] {};
 			A[i][0] = 150;
 			A[0][i] = 250;
 		}
 	}
 
+	A[0][0] = 0;
+
 	return A;
 }
 
-void matrix_tostring(int** a)
+void matrix_tostring(float** a, int matrix_size)
 {
-	for (int i = 0; i < N; i++)
+	for (int i = 0; i < matrix_size; i++)
 	{
-		for (int j = 0; j < N; j++) {
+		cout << "\n";
+		for (int j = 0; j < matrix_size; j++) {
 			cout << a[i][j] << "\t";
 		}
-		cout << "\n";
 	}
 }
 
-void calculate_array(int** A, bool is_parallel)
+void parallel_calculation(float** A, int matrix_size, int number_of_threads) 
+{
+	for (int i = 2; i < matrix_size + matrix_size; i++)
+	{
+		if (i <= matrix_size)
+		{
+			#pragma omp parallel for num_threads(number_of_threads)
+			for (int j = 1; j < i; j++)
+				A[i - j][j] = (fabs(sin(A[i - j - 1][j - 1]))
+					+ fabs(sin(A[i - j][j - 1]))
+					+ fabs(sin(A[i - j - 1][j]))) * 100;
+		}
+		else {
+			#pragma omp parallel for num_threads(number_of_threads)
+			for (int j = matrix_size - 1; j > i - matrix_size; j--)
+				A[i - j][j] = (fabs(sin(A[i - j - 1][j - 1]))
+					+ fabs(sin(A[i - j][j - 1]))
+					+ fabs(sin(A[i - j - 1][j]))) * 100;
+		}
+	}
+}
+
+void calculate_array(float** A, bool is_parallel, int matrix_size, int number_of_threads = 4)
 {
 	if (is_parallel)
 	{
-#pragma omp parallel for
-		for (int i = 1; i < N; i++)
-			for (int j = 1; j < N; j++)
-				A[i][j] = (fabs(sin(A[i - 1][j - 1]))
-					+ fabs(sin(A[i][j - 1]))
-					+ fabs(sin(A[i - 1][j]))) * 100;
+		parallel_calculation(A, matrix_size, number_of_threads);
 	}
 	else {
-		for (int i = 1; i < N; i++)
-			for (int j = 1; j < N; j++)
+		for (int i = 1; i < matrix_size; i++)
+			for (int j = 1; j < matrix_size; j++)
 				A[i][j] = (fabs(sin(A[i - 1][j - 1]))
 					+ fabs(sin(A[i][j - 1]))
 					+ fabs(sin(A[i - 1][j]))) * 100;
 	}
 }
 
-void print_specific_elements(int argc, char ** argv, int ** temp) 
+void print_specific_elements(int argc, char ** argv, float** temp, int matrix_size)
 {
 	if (argc % 2 == 1) {
 		for (int i = 1; i < argc; i = i + 2)
@@ -66,7 +80,7 @@ void print_specific_elements(int argc, char ** argv, int ** temp)
 			int firstIndex = atoi(argv[i]);
 			int secondIndex = atoi(argv[i + 1]);
 
-			if (firstIndex < N && secondIndex < N)
+			if (firstIndex < matrix_size && secondIndex < matrix_size)
 				cout << "\nA[" << firstIndex << "][" << secondIndex << "]: " << temp[firstIndex][secondIndex];
 		}
 	}
