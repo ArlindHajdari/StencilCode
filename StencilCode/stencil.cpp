@@ -37,7 +37,7 @@ void matrix_tostring(float** a, int matrix_size)
 
 void parallel_calculation(float** A, int matrix_size, int number_of_threads) 
 {
-	for (int i = 2; i < matrix_size + matrix_size; i++)
+	for (int i = 2; i < 2 * matrix_size; i++)
 	{
 		if (i <= matrix_size)
 		{
