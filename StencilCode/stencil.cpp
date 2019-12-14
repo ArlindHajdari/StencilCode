@@ -39,7 +39,7 @@ void parallel_calculation(float** A, int matrix_size, int number_of_threads)
 {
 	for (int i = 2; i < 2 * matrix_size; i++)
 	{
-		if (i <= matrix_size)
+		if (i < matrix_size)
 		{
 			#pragma omp parallel for num_threads(number_of_threads)
 			for (int j = 1; j < i; j++)
