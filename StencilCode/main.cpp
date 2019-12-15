@@ -5,11 +5,11 @@
 using namespace std;
 
 //const int N = 8192;
-//const int N = 20000;
-const int N = 3001;
+const int N = 20000;
+//const int N = 3001;
 //const int N = 10;
 
-const int number_of_threads = 8;
+const int number_of_threads = 4;
 
 int main(int argc /*Number of arguments*/, char** argv /*Arguments(first argument the current .cpp path)*/)
 {

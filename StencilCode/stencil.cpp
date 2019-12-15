@@ -37,6 +37,7 @@ void matrix_tostring(float** a, int matrix_size)
 
 void parallel_calculation(float** A, int matrix_size, int number_of_threads) 
 {
+	//int threadNumber = matrix_size;
 	for (int i = 2; i < 2 * matrix_size; i++)
 	{
 		if (i < matrix_size)
@@ -47,12 +48,17 @@ void parallel_calculation(float** A, int matrix_size, int number_of_threads)
 					+ fabs(sin(A[i - j][j - 1]))
 					+ fabs(sin(A[i - j - 1][j]))) * 100;
 		}
-		else {
+		else 
+		{
+			
 			#pragma omp parallel for num_threads(number_of_threads)
-			for (int j = matrix_size - 1; j > i - matrix_size; j--)
+			for (int j = matrix_size - 1; j > i - matrix_size; j--) 
+			{
+				//threadNumber = j;
 				A[i - j][j] = (fabs(sin(A[i - j - 1][j - 1]))
 					+ fabs(sin(A[i - j][j - 1]))
 					+ fabs(sin(A[i - j - 1][j]))) * 100;
+			}	
 		}
 	}
 }
